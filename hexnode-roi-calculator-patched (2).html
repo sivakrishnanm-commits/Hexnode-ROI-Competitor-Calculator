@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hexnode ROI Calculator</title>
+  <style>
+    :root{
+      --navy:#020A19;--blue:#003CF5;--pearl:#F8F5F0;--white:#fff;--gray:#4A4F57;
+      --line:rgba(2,10,25,.12);--soft-blue:#EBF3FE;--success:#409C35;--danger:#CC0000;
+      --input:#FFFAED;--input-border:#FDEAB6;--shadow:0 22px 70px rgba(2,10,25,.10);
+    }
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--pearl);color:var(--navy);font-family:Aeonik,Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;font-weight:400;line-height:1.5}a{color:inherit;text-decoration:none}
+    #inputs,#cost,#roi,#bonus{scroll-margin-top:96px}
+    .topbar{position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:18px clamp(18px,4vw,46px);background:rgba(2,10,25,.94);color:#fff;backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.10)}
+    .brand{font-size:1.35rem;letter-spacing:-.05em}.nav{display:flex;gap:6px;overflow:auto;color:rgba(255,255,255,.72);font-size:.92rem}.nav a{padding:8px 11px;border-radius:99px}.nav a:hover{background:rgba(255,255,255,.10);color:#fff}
+    .hero{position:relative;padding:74px clamp(18px,4vw,46px);color:#fff;background:radial-gradient(circle at 80% 0%,rgba(0,60,245,.72),transparent 30%),linear-gradient(135deg,#020A19 0%,#04122C 60%,#225193 140%);overflow:hidden}.hero:before{content:"";position:absolute;inset:0;opacity:.22;background-image:linear-gradient(rgba(255,255,255,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.08) 1px,transparent 1px);background-size:64px 64px;pointer-events:none}.hero-inner{position:relative;max-width:1180px;margin:auto;display:grid;grid-template-columns:1.05fr .95fr;gap:34px;align-items:center}.eyebrow{margin:0 0 16px;color:rgba(255,255,255,.70);letter-spacing:.13em;text-transform:uppercase;font-size:.78rem}h1,h2,h3,p{margin-top:0}h1{margin-bottom:18px;font-size:clamp(2.6rem,6vw,5.8rem);line-height:.96;letter-spacing:-.07em;font-weight:400}.hero p{max-width:620px;color:rgba(255,255,255,.78)}.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;margin-top:18px;padding:0 18px;border-radius:99px;background:var(--blue);color:#fff;box-shadow:0 14px 36px rgba(0,60,245,.34);border:0;cursor:pointer}
+    .summary{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:18px;border:1px solid rgba(255,255,255,.16);border-radius:28px;background:rgba(255,255,255,.08);backdrop-filter:blur(18px)}.summary-card{padding:18px;border-radius:20px;background:rgba(255,255,255,.94);color:var(--navy)}.summary-card.big{grid-column:1/-1}.summary-card .label{color:var(--gray)}.summary-card .value{color:var(--navy)}.summary-card .note{color:var(--gray)}.label{margin:0 0 8px;color:var(--gray);font-size:.86rem}.value{margin:0;font-size:clamp(1.8rem,4vw,3.1rem);line-height:1;letter-spacing:-.055em}.note{margin:10px 0 0;color:var(--gray);font-size:.9rem}.positive{color:var(--success)}.negative{color:var(--danger)}
+    .wrap{max-width:1180px;margin:auto;padding:44px clamp(18px,4vw,46px) 70px}.layout{display:grid;grid-template-columns:360px minmax(0,1fr);gap:24px;align-items:start}.card{background:rgba(255,255,255,.88);border:1px solid var(--line);border-radius:28px;box-shadow:var(--shadow)}.inputs{position:sticky;top:88px;padding:22px}.inputs h2,.result h2{font-size:2rem;line-height:1.05;letter-spacing:-.055em;font-weight:400;margin-bottom:6px}.muted{color:var(--gray);font-size:.94rem}.group{padding:18px 0;border-top:1px solid var(--line)}.group:first-of-type{border-top:0}.group h3{margin-bottom:12px;color:var(--gray);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;font-weight:400}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.grid.one{grid-template-columns:1fr}.field{display:grid;gap:6px}.wide{grid-column:1/-1}label{color:var(--gray);font-size:.84rem}input,select{width:100%;min-height:42px;border:1px solid var(--input-border);border-radius:13px;background:var(--input);color:var(--blue);padding:9px 11px;font:inherit;outline:none}input:focus,select:focus{border-color:rgba(0,60,245,.55);background:#fff;box-shadow:0 0 0 4px rgba(0,60,245,.10)}.reset{width:100%;margin-top:8px;border:1px solid var(--line);background:#fff;color:var(--navy);cursor:pointer;box-shadow:none}.results{display:grid;gap:22px}.result{padding:24px}.head{display:flex;justify-content:space-between;gap:18px;align-items:start;margin-bottom:18px}.pill{white-space:nowrap;padding:8px 12px;border-radius:99px;background:var(--soft-blue);color:var(--blue);font-size:.82rem}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:18px;background:#fff;position:relative;background-image:linear-gradient(to right,#fff 30%,rgba(255,255,255,0)),linear-gradient(to right,rgba(255,255,255,0),#fff 70%),radial-gradient(farthest-side at 0 50%,rgba(2,10,25,.10),rgba(2,10,25,0)),radial-gradient(farthest-side at 100% 50%,rgba(2,10,25,.10),rgba(2,10,25,0));background-position:left center,right center,left center,right center;background-repeat:no-repeat;background-size:30px 100%,30px 100%,14px 100%,14px 100%;background-attachment:local,local,scroll,scroll}table{width:100%;min-width:760px;border-collapse:collapse}th,td{padding:13px 15px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}th{background:rgba(248,245,240,.78);color:var(--gray);font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;font-weight:400}tbody tr:last-child td{border-bottom:0}.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}.hex td{background:rgba(235,243,254,.72)}.mini{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}.mini-card{padding:16px;border:1px solid var(--line);border-radius:18px;background:#fff}.mini-card strong{display:block;margin-top:6px;font-size:1.65rem;line-height:1.1;letter-spacing:-.04em;font-weight:400}.meter{height:9px;margin-top:10px;border-radius:99px;background:rgba(2,10,25,.08);overflow:hidden}.meter span{display:block;height:100%;background:var(--success);width:0}.bonus{display:grid;grid-template-columns:1fr 1fr;gap:14px}.box,.verdict{padding:16px;border:1px solid var(--line);border-radius:18px;background:#fff}.box h3{margin-bottom:8px;color:var(--gray);font-size:.78rem;letter-spacing:.10em;text-transform:uppercase;font-weight:400}.verdict{grid-column:1/-1;background:linear-gradient(135deg,var(--soft-blue),#fff);border-color:rgba(0,60,245,.16)}.verdict strong{display:block;margin-bottom:6px;color:var(--blue);font-weight:400}.placeholder{color:rgba(2,10,25,.28)}.footer{max-width:1180px;margin:0 auto 40px;padding:0 clamp(18px,4vw,46px);color:var(--gray);font-size:.84rem}
+    @media(max-width:940px){.hero-inner,.layout{grid-template-columns:1fr}.inputs{position:static}.mini,.bonus{grid-template-columns:1fr}.verdict{grid-column:auto}#inputs,#cost,#roi,#bonus{scroll-margin-top:140px}}
+    @media(max-width:680px){
+      .topbar{align-items:flex-start;flex-direction:column;padding:14px 18px;gap:10px}
+      .brand{font-size:1.15rem}
+      .nav{width:100%;font-size:.85rem}
+      .nav a{padding:6px 9px}
+      .hero{padding:48px 18px 42px}
+      .hero-inner{gap:24px}
+      h1{font-size:clamp(2rem,9vw,3rem);margin-bottom:14px}
+      .hero p{font-size:.95rem}
+      .summary,.grid{grid-template-columns:1fr}
+      .summary{padding:14px;gap:10px}
+      .summary-card{padding:14px}
+      .value{font-size:clamp(1.6rem,7vw,2.2rem)}
+      .wide{grid-column:auto}
+      .head{flex-direction:column;align-items:flex-start;gap:10px;margin-bottom:14px}
+      .pill{align-self:flex-start}
+      .wrap{padding:24px 14px 50px}
+      .layout{gap:16px}
+      .card{border-radius:20px}
+      .inputs,.result{padding:18px}
+      .inputs h2,.result h2{font-size:1.5rem}
+      .group{padding:14px 0}
+      .group h3{font-size:.7rem;margin-bottom:10px}
+      input,select{min-height:44px;font-size:16px} /* 16px prevents iOS zoom on focus */
+
+      /* RESPONSIVE TABLES — reflow rows into stacked cards on mobile */
+      .table-wrap{overflow:visible;border:0;background:transparent;background-image:none;border-radius:0}
+      table{min-width:0;width:100%;display:block}
+      thead{display:none} /* hide header row; we'll show labels per cell */
+      tbody{display:block}
+      tr{display:block;margin-bottom:10px;padding:14px;border:1px solid var(--line);border-radius:14px;background:#fff}
+      tr.hex{background:rgba(235,243,254,.72);border-color:rgba(0,60,245,.18)}
+      td{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:7px 0;border-bottom:1px dashed rgba(2,10,25,.08);text-align:right;font-size:.9rem}
+      td:last-child{border-bottom:0}
+      td:before{content:attr(data-label);color:var(--gray);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;text-align:left;flex:0 0 auto;max-width:55%}
+      td.num{justify-content:space-between;text-align:right}
+      /* First cell (Product/Tier label) gets prominent treatment as a "card header" */
+      td.row-title{font-size:1rem;color:var(--navy);font-weight:500;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:4px}
+      td.row-title:before{display:none}
+      td.row-title{justify-content:flex-start;text-align:left}
+
+      .mini-card{padding:14px}
+      .mini-card strong{font-size:1.35rem}
+      .box,.verdict{padding:14px}
+      .bonus{gap:10px}
+      #inputs,#cost,#roi,#bonus{scroll-margin-top:120px}
+      .footer{padding:0 18px;font-size:.78rem}
+    }
+    @media(max-width:420px){
+      h1{font-size:clamp(1.7rem,9vw,2.4rem)}
+      .inputs,.result{padding:14px}
+      td{font-size:.85rem}
+      td:before{font-size:.68rem}
+    }
+
+    /* ============ PRINT / PDF STYLES ============ */
+    @media print{
+      @page{size:A4;margin:14mm 14mm 22mm 14mm}
+      *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;color-adjust:exact !important}
+      body{background:#fff;color:var(--navy);font-size:10pt;line-height:1.4}
+      .topbar,.nav,.btn,.reset,.pill,.footer,.no-print{display:none !important}
+
+      /* Repeating disclaimer footer — fixed at the bottom of every printed page */
+      .print-disclaimer{
+        display:block !important;
+        position:fixed;
+        bottom:0;
+        left:0;
+        right:0;
+        padding:4pt 14mm;
+        border-top:1px solid var(--line);
+        background:#fff;
+        font-size:7pt;
+        line-height:1.35;
+        color:var(--gray);
+        text-align:left;
+      }
+      .print-disclaimer strong{color:var(--navy);font-weight:600}
+
+      .hero{padding:0 0 16pt;background:#fff !important;color:var(--navy) !important;page-break-after:avoid}
+      .hero:before{display:none}
+      .hero-inner{display:block;max-width:none;padding:0}
+      .eyebrow{color:var(--blue) !important;margin-bottom:8pt}
+      h1{font-size:24pt;line-height:1.05;margin-bottom:10pt;color:var(--navy) !important;max-width:none}
+      .hero p{font-size:11pt;color:var(--gray) !important;max-width:none;margin-bottom:14pt}
+      .summary{display:grid !important;grid-template-columns:1fr 1fr 1fr;gap:8pt;padding:0;border:0;background:transparent;backdrop-filter:none}
+      .summary-card{padding:10pt;border:1px solid var(--line);border-radius:6pt;background:#fff !important;box-shadow:none}
+      .summary-card.big{grid-column:1/-1}
+      .summary-card .label{font-size:8pt;color:var(--gray) !important}
+      .summary-card .value{font-size:18pt;color:var(--navy) !important}
+      .summary-card .note{font-size:8pt;color:var(--gray) !important}
+
+      .wrap{padding:0;max-width:none}
+      .layout{display:block}
+      .inputs{display:none} /* sidebar inputs not needed in PDF */
+      .results{display:block}
+      .card{box-shadow:none;border:1px solid var(--line);border-radius:6pt;background:#fff !important;page-break-inside:avoid;margin-bottom:12pt}
+      .result{padding:12pt}
+      .head{display:block;margin-bottom:8pt}
+      .result h2{font-size:14pt;margin-bottom:4pt;color:var(--navy) !important}
+      .muted{font-size:9pt;color:var(--gray) !important}
+
+      /* Force tables back to proper table layout (override mobile reflow) */
+      .table-wrap{overflow:visible !important;border:1px solid var(--line) !important;border-radius:6pt !important;background:#fff !important;background-image:none !important;page-break-inside:avoid}
+      table{display:table !important;width:100% !important;min-width:0 !important;border-collapse:collapse;font-size:8.5pt}
+      thead{display:table-header-group !important}
+      tbody{display:table-row-group !important}
+      tr{display:table-row !important;margin:0 !important;padding:0 !important;border:0 !important;border-radius:0 !important;background:transparent !important;page-break-inside:avoid}
+      tr.hex{background:rgba(235,243,254,.6) !important;border:0 !important}
+      td,th{display:table-cell !important;padding:6pt 8pt !important;border:0 !important;border-bottom:1px solid var(--line) !important;text-align:left !important;font-size:8.5pt !important;justify-content:flex-start !important;gap:0 !important}
+      td.num,th.num{text-align:right !important}
+      td:before{display:none !important} /* hide mobile labels */
+      td.row-title{font-weight:600;color:var(--navy) !important;border-bottom:1px solid var(--line) !important;padding-bottom:6pt !important;margin-bottom:0 !important;font-size:8.5pt !important}
+      th{background:#f5f5f0 !important;color:var(--gray) !important;font-size:7.5pt !important;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+
+      .mini{display:grid !important;grid-template-columns:repeat(3,1fr);gap:8pt;margin-top:10pt}
+      .mini-card{padding:8pt;border:1px solid var(--line);background:#fff !important;border-radius:4pt}
+      .mini-card strong{font-size:13pt}
+      .meter{background:rgba(2,10,25,.08) !important}
+      .meter span{background:var(--success) !important}
+
+      .bonus{display:grid !important;grid-template-columns:1fr 1fr;gap:8pt}
+      .box,.verdict{padding:8pt;border:1px solid var(--line);background:#fff !important;border-radius:4pt}
+      .verdict{grid-column:1/-1;background:rgba(235,243,254,.5) !important}
+      .verdict strong{color:var(--blue) !important}
+
+      .positive{color:var(--success) !important}
+      .negative{color:var(--danger) !important}
+
+      /* Page break hints */
+      #cost{page-break-after:auto}
+      #roi{page-break-before:auto}
+      #bonus{page-break-before:auto}
+
+      /* Hide the inline-footer version since disclaimer is now repeating */
+      .print-footer{display:none !important}
+    }
+    .print-footer{display:none}
+    .print-disclaimer{display:none}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <!-- Replace this text with the approved Hexnode logo asset before publishing. -->
+    <a class="brand" href="#top">hexnode</a>
+    <nav class="nav" aria-label="Page navigation"><a href="#inputs">Inputs</a><a href="#cost">Cost</a><a href="#roi">ROI</a><a href="#bonus">Bonus</a></nav>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-inner">
+        <div>
+          <p class="eyebrow">ROI Calculator</p>
+          <h1>Calculate the cost advantage of Hexnode.</h1>
+          <p>Compare licensing, admin resource cost, total cost of ownership, and savings across three plan tiers.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+            <a class="btn" href="#inputs">Start calculating</a>
+            <button class="btn" type="button" id="downloadPdf" style="background:rgba(255,255,255,.12);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.25)">⬇ Download PDF</button>
+          </div>
+        </div>
+        <aside class="summary" aria-label="Live savings summary">
+          <div class="summary-card big"><p class="label">Total 3-tier savings</p><p class="value" id="kpiSavings">$0</p><p class="note" id="kpiNote">Based on current inputs.</p></div>
+          <div class="summary-card"><p class="label">Savings rate</p><p class="value" id="kpiRate">0%</p><p class="note">Savings / competitor TCO.</p></div>
+          <div class="summary-card"><p class="label">Best tier</p><p class="value" id="kpiBest">-</p><p class="note" id="kpiBestNote">Highest dollar savings.</p></div>
+        </aside>
+      </div>
+    </section>
+
+    <div class="wrap">
+      <div class="layout">
+        <aside class="card inputs" id="inputs">
+          <h2>Inputs</h2>
+          <p class="muted">Edit the highlighted fields. Results update automatically.</p>
+          <form id="form">
+            <section class="group"><h3>Deployment</h3><div class="grid">
+              <div class="field"><label for="devices">Number of devices</label><input id="devices" type="number" min="0" step="1" value="6000" data-default="6000"></div>
+              <div class="field"><label for="years">Number of years</label><input id="years" type="number" min="0" step="1" value="3" data-default="3"></div>
+              <div class="field wide"><label for="currency">Currency</label><select id="currency" data-default="USD">
+                <option value="USD">USD - US Dollar ($)</option>
+                <option value="EUR">EUR - Euro (€)</option>
+                <option value="GBP">GBP - British Pound (£)</option>
+                <option value="INR">INR - Indian Rupee (₹)</option>
+                <option value="AED">AED - UAE Dirham</option>
+                <option value="SAR">SAR - Saudi Riyal</option>
+                <option value="JPY">JPY - Japanese Yen (¥)</option>
+                <option value="CNY">CNY - Chinese Yuan (¥)</option>
+                <option value="AUD">AUD - Australian Dollar (A$)</option>
+                <option value="CAD">CAD - Canadian Dollar (C$)</option>
+                <option value="SGD">SGD - Singapore Dollar (S$)</option>
+                <option value="HKD">HKD - Hong Kong Dollar (HK$)</option>
+                <option value="CHF">CHF - Swiss Franc</option>
+                <option value="SEK">SEK - Swedish Krona</option>
+                <option value="NOK">NOK - Norwegian Krone</option>
+                <option value="DKK">DKK - Danish Krone</option>
+                <option value="ZAR">ZAR - South African Rand (R)</option>
+                <option value="BRL">BRL - Brazilian Real (R$)</option>
+                <option value="MXN">MXN - Mexican Peso</option>
+                <option value="NZD">NZD - New Zealand Dollar (NZ$)</option>
+              </select></div>
+            </div></section>
+
+            <section class="group"><h3>Competitor pricing / monthly device</h3><div class="grid one">
+              <div class="field"><label for="compLowName">Low tier plan</label><input id="compLowName" value="Competitor - Plan 1 (e.g. iOS)" data-default="Competitor - Plan 1 (e.g. iOS)"></div>
+              <div class="field"><label for="compLowPrice">Low price</label><input id="compLowPrice" type="number" min="0" step="0.01" value="5" data-default="5"></div>
+              <div class="field"><label for="compMidName">Mid tier plan</label><input id="compMidName" value="Competitor - Plan 2 (e.g. macOS)" data-default="Competitor - Plan 2 (e.g. macOS)"></div>
+              <div class="field"><label for="compMidPrice">Mid price</label><input id="compMidPrice" type="number" min="0" step="0.01" value="7.9" data-default="7.9"></div>
+              <div class="field"><label for="compHighName">High tier plan</label><input id="compHighName" value="Competitor - Plan 3 (e.g. Bundle)" data-default="Competitor - Plan 3 (e.g. Bundle)"></div>
+              <div class="field"><label for="compHighPrice">High price</label><input id="compHighPrice" type="number" min="0" step="0.01" value="10" data-default="10"></div>
+            </div></section>
+
+            <section class="group"><h3>Hexnode pricing / monthly device</h3><div class="grid one">
+              <div class="field"><label for="hexLowName">Low tier plan</label><input id="hexLowName" value="Hexnode Enterprise" data-default="Hexnode Enterprise"></div>
+              <div class="field"><label for="hexLowPrice">Low price</label><input id="hexLowPrice" type="number" min="0" step="0.01" value="3.2" data-default="3.2"></div>
+              <div class="field"><label for="hexMidName">Mid tier plan</label><input id="hexMidName" value="Hexnode Ultimate" data-default="Hexnode Ultimate"></div>
+              <div class="field"><label for="hexMidPrice">Mid price</label><input id="hexMidPrice" type="number" min="0" step="0.01" value="4.7" data-default="4.7"></div>
+              <div class="field"><label for="hexHighName">High tier plan</label><input id="hexHighName" value="Hexnode Ultra" data-default="Hexnode Ultra"></div>
+              <div class="field"><label for="hexHighPrice">High price</label><input id="hexHighPrice" type="number" min="0" step="0.01" value="6.48" data-default="6.48"></div>
+            </div></section>
+
+            <section class="group"><h3>Admin resource inputs</h3><div class="grid">
+              <div class="field"><label for="compAdmins">Competitor admins</label><input id="compAdmins" type="number" min="0" step="1" value="6" data-default="6"></div>
+              <div class="field"><label for="compSalary">Competitor salary/admin</label><input id="compSalary" type="number" min="0" step="1" value="40000" data-default="40000"></div>
+              <div class="field"><label for="hexAdmins">Hexnode admins</label><input id="hexAdmins" type="number" min="0" step="1" value="3" data-default="3"></div>
+              <div class="field"><label for="hexSalary">Hexnode salary/admin</label><input id="hexSalary" type="number" min="0" step="1" value="17000" data-default="17000"></div>
+            </div></section>
+            <button class="btn reset" type="button" id="reset">Reset defaults</button>
+          </form>
+        </aside>
+
+        <section class="results">
+          <article class="card result" id="cost"><div class="head"><div><h2>Cost comparison</h2><p class="muted">License and admin resource expenses.</p></div><span class="pill" id="deploymentPill">6,000 devices / 3 years</span></div>
+            <div class="table-wrap"><table><thead><tr><th>Product</th><th>Plan</th><th class="num">Monthly/device</th><th class="num">Annual license</th><th class="num">Total license</th></tr></thead><tbody id="licenseRows"></tbody></table></div>
+            <div class="table-wrap" style="margin-top:16px"><table><thead><tr><th>Product</th><th class="num">Admins</th><th class="num">Annual/admin</th><th class="num">Total resource cost</th></tr></thead><tbody id="resourceRows"></tbody></table></div>
+          </article>
+
+          <article class="card result" id="roi"><div class="head"><div><h2>ROI &amp; savings</h2><p class="muted">TCO and Hexnode savings by tier.</p></div><span class="pill">Live calculation</span></div>
+            <div class="table-wrap"><table><thead><tr><th>Tier</th><th>Plan</th><th class="num">License cost</th><th class="num">Resource cost</th><th class="num">Total TCO</th><th class="num">Savings</th><th class="num">Savings %</th></tr></thead><tbody id="roiRows"></tbody></table></div>
+            <div class="mini"><div class="mini-card"><span class="muted">Total 3-tier savings</span><strong id="totalSavings">$0</strong></div><div class="mini-card"><span class="muted">Combined savings rate</span><strong id="combinedRate">0%</strong><div class="meter"><span id="meter"></span></div></div><div class="mini-card"><span class="muted">Competitor TCO</span><strong id="competitorTco">$0</strong></div></div>
+          </article>
+
+          <article class="card result" id="bonus"><div class="head"><div><h2>Bonus comparison</h2><p class="muted">Hexnode highest tier vs. competitor basic tier.</p></div><span class="pill">Upgrade story</span></div>
+            <div class="bonus"><div class="box"><h3>Competitor basic</h3><p id="bonusCompPlan">-</p><p class="value" id="bonusCompTco" style="font-size:2rem">$0</p></div><div class="box"><h3>Hexnode top tier</h3><p id="bonusHexPlan">-</p><p class="value" id="bonusHexTco" style="font-size:2rem">$0</p></div><div class="verdict"><strong id="bonusDifference">Difference: $0</strong><span id="bonusVerdict">Update the inputs to see the comparison.</span></div></div>
+          </article>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <!-- Disclaimer footer for PDF — fixed at the bottom of every printed page via @media print CSS.
+       Hidden on screen via .print-disclaimer{display:none} default. -->
+  <div class="print-disclaimer" aria-hidden="true">
+    <strong>Hexnode ROI Calculator</strong> · Generated <span id="printDate"></span> · This calculator provides indicative estimates for discussion purposes only. All figures are subject to change and do not constitute a binding offer. Final pricing and terms will be set out in the signed contract.
+  </div>
+
+  <p class="footer">This calculator provides indicative estimates for discussion purposes only. All figures are subject to change and do not constitute a binding offer. Final pricing and terms will be set out in the signed contract.</p>
+
+  <script>
+    const tiers=[
+      ["Low-tier plans","Low tier","compLowName","compLowPrice","hexLowName","hexLowPrice"],
+      ["Mid-tier plans","Mid tier","compMidName","compMidPrice","hexMidName","hexMidPrice"],
+      ["High-tier plans","High tier","compHighName","compHighPrice","hexHighName","hexHighPrice"]
+    ];
+    const $=id=>document.getElementById(id);
+    const text=id=>$(id).value.trim();
+    // FIX: accept zero as a valid value (>= 0, not > 0); non-finite or negative falls back to 0
+    const num=id=>{const v=Number($(id).value);return Number.isFinite(v)&&v>=0?v:0};
+    const clean=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+    const n=(v,d=0)=>new Intl.NumberFormat("en-US",{minimumFractionDigits:d,maximumFractionDigits:d}).format(v||0);
+    // Currency-locale pairing: each currency renders in its native locale (grouping, decimal style, symbol placement)
+    const localeFor={USD:"en-US",EUR:"de-DE",GBP:"en-GB",INR:"en-IN",AED:"ar-AE",SAR:"ar-SA",JPY:"ja-JP",CNY:"zh-CN",AUD:"en-AU",CAD:"en-CA",SGD:"en-SG",HKD:"en-HK",CHF:"de-CH",SEK:"sv-SE",NOK:"nb-NO",DKK:"da-DK",ZAR:"en-ZA",BRL:"pt-BR",MXN:"es-MX",NZD:"en-NZ"};
+    // Cache formatters per (currency, decimal-count) pair so we don't rebuild them on every cell render
+    const fmtCache={};
+    function fmt(d){
+      const code=text("currency")||"USD";
+      const key=`${code}_${d}`;
+      if(!fmtCache[key]){
+        try{fmtCache[key]=new Intl.NumberFormat(localeFor[code]||"en-US",{style:"currency",currency:code,minimumFractionDigits:d,maximumFractionDigits:d});}
+        catch(e){fmtCache[key]=new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",minimumFractionDigits:d,maximumFractionDigits:d});}
+      }
+      return fmtCache[key];
+    }
+    // Intl handles negatives natively; output is already locale-safe text (no HTML injection risk)
+    const money=(v,d=0)=>fmt(d).format(Number.isFinite(v)?v:0);
+    const pct=v=>`${n((Number.isFinite(v)?v:0)*100,1)}%`;
+    // FIX: emit a visible em-dash placeholder for empty ROI cells instead of bare empty <td>s
+    const dash=`<span class="placeholder" aria-hidden="true">—</span>`;
+
+    function calculate(){
+      const devices=num("devices"),years=num("years"),compAdmins=num("compAdmins"),compSalary=num("compSalary"),hexAdmins=num("hexAdmins"),hexSalary=num("hexSalary");
+      const compResource=compAdmins*compSalary*years,hexResource=hexAdmins*hexSalary*years;
+      const rows=tiers.map(t=>{
+        const [label,shortLabel,compNameId,compPriceId,hexNameId,hexPriceId]=t;
+        const compMonthly=num(compPriceId),hexMonthly=num(hexPriceId);
+        const compAnnual=compMonthly*12*devices,hexAnnual=hexMonthly*12*devices;
+        const compLicense=compAnnual*years,hexLicense=hexAnnual*years;
+        const compTco=compLicense+compResource,hexTco=hexLicense+hexResource;
+        const savings=compTco-hexTco,rate=compTco?savings/compTco:0;
+        return {label,shortLabel,compName:text(compNameId)||"Competitor plan",hexName:text(hexNameId)||"Hexnode plan",compMonthly,hexMonthly,compAnnual,hexAnnual,compLicense,hexLicense,compResource,hexResource,compTco,hexTco,savings,rate};
+      });
+      const totalSavings=rows.reduce((a,r)=>a+r.savings,0);
+      const totalCompTco=rows.reduce((a,r)=>a+r.compTco,0);
+      const combinedRate=totalCompTco?totalSavings/totalCompTco:0;
+      const best=[...rows].sort((a,b)=>b.savings-a.savings)[0];
+      return {devices,years,compAdmins,compSalary,hexAdmins,hexSalary,compResource,hexResource,rows,totalSavings,totalCompTco,combinedRate,best};
+    }
+
+    function draw(){
+      const m=calculate();
+      $("licenseRows").innerHTML=m.rows.map(r=>`
+        <tr><td class="row-title" data-label="Product">Competitor</td><td data-label="Plan">${clean(r.compName)}</td><td class="num" data-label="Monthly / device">${money(r.compMonthly,2)}</td><td class="num" data-label="Annual license">${money(r.compAnnual)}</td><td class="num" data-label="Total license">${money(r.compLicense)}</td></tr>
+        <tr class="hex"><td class="row-title" data-label="Product">Hexnode</td><td data-label="Plan">${clean(r.hexName)}</td><td class="num" data-label="Monthly / device">${money(r.hexMonthly,2)}</td><td class="num" data-label="Annual license">${money(r.hexAnnual)}</td><td class="num" data-label="Total license">${money(r.hexLicense)}</td></tr>`).join("");
+      $("resourceRows").innerHTML=`
+        <tr><td class="row-title" data-label="Product">Competitor</td><td class="num" data-label="Admins">${n(m.compAdmins)}</td><td class="num" data-label="Annual / admin">${money(m.compSalary)}</td><td class="num" data-label="Total resource cost">${money(m.compResource)}</td></tr>
+        <tr class="hex"><td class="row-title" data-label="Product">Hexnode</td><td class="num" data-label="Admins">${n(m.hexAdmins)}</td><td class="num" data-label="Annual / admin">${money(m.hexSalary)}</td><td class="num" data-label="Total resource cost">${money(m.hexResource)}</td></tr>`;
+      // FIX: empty ROI cells get a placeholder dash for screen readers + visual clarity
+      $("roiRows").innerHTML=m.rows.map(r=>`
+        <tr><td class="row-title" data-label="Tier">${clean(r.label)}</td><td data-label="Plan">${clean(r.compName)}</td><td class="num" data-label="License cost">${money(r.compLicense)}</td><td class="num" data-label="Resource cost">${money(r.compResource)}</td><td class="num" data-label="Total TCO">${money(r.compTco)}</td><td class="num ${r.savings>=0?"positive":"negative"}" data-label="Savings">${money(r.savings)}</td><td class="num ${r.rate>=0?"positive":"negative"}" data-label="Savings %">${pct(r.rate)}</td></tr>
+        <tr class="hex"><td class="row-title" data-label="Tier">${dash}</td><td data-label="Plan">${clean(r.hexName)}</td><td class="num" data-label="License cost">${money(r.hexLicense)}</td><td class="num" data-label="Resource cost">${money(r.hexResource)}</td><td class="num" data-label="Total TCO">${money(r.hexTco)}</td><td class="num" data-label="Savings">${dash}</td><td class="num" data-label="Savings %">${dash}</td></tr>`).join("");
+
+      $("kpiSavings").textContent=money(m.totalSavings);$("kpiSavings").className=`value ${m.totalSavings>=0?"positive":"negative"}`;
+      $("kpiNote").textContent=`${n(m.devices)} devices over ${n(m.years)} year${m.years===1?"":"s"}.`;
+      $("kpiRate").textContent=pct(m.combinedRate);
+      // FIX: full "Low tier" / "Mid tier" / "High tier" label instead of bare "Low" / "Mid" / "High"
+      $("kpiBest").textContent=m.best.shortLabel;
+      $("kpiBestNote").textContent=`${money(m.best.savings)} savings.`;
+      $("deploymentPill").textContent=`${n(m.devices)} devices / ${n(m.years)} year${m.years===1?"":"s"}`;
+      $("totalSavings").textContent=money(m.totalSavings);$("combinedRate").textContent=pct(m.combinedRate);$("competitorTco").textContent=money(m.totalCompTco);$("meter").style.width=`${Math.max(0,Math.min(100,m.combinedRate*100))}%`;
+
+      const basic=m.rows[0],top=m.rows[2],diff=Math.abs(basic.compTco-top.hexTco),cheaper=top.hexTco<=basic.compTco;
+      $("bonusCompPlan").textContent=basic.compName;$("bonusCompTco").textContent=money(basic.compTco);$("bonusHexPlan").textContent=top.hexName;$("bonusHexTco").textContent=money(top.hexTco);$("bonusDifference").textContent=`Difference: ${money(diff)}`;
+      $("bonusVerdict").textContent=cheaper?`${top.hexName} is cheaper than ${basic.compName}, saving ${money(diff)} while positioning the customer on the top Hexnode tier.`:`For ${money(diff)} more than ${basic.compName}, the customer can move to ${top.hexName} with the full premium Hexnode package.`;
+    }
+    $("form").addEventListener("input",draw);
+    $("form").addEventListener("change",draw);
+    $("reset").addEventListener("click",()=>{document.querySelectorAll("[data-default]").forEach(el=>el.value=el.dataset.default);draw();});
+
+    // PDF download — uses browser's print dialog with "Save as PDF" destination
+    $("downloadPdf").addEventListener("click",()=>{
+      // Stamp the current date into the print footer
+      const now=new Date();
+      $("printDate").textContent=now.toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"});
+      // Set a friendly filename for the saved PDF (most browsers use the document.title)
+      const originalTitle=document.title;
+      const code=$("currency").value||"USD";
+      const devicesVal=$("devices").value||"0";
+      document.title=`Hexnode-ROI-${devicesVal}devices-${code}-${now.toISOString().slice(0,10)}`;
+      window.print();
+      // Restore the page title after the print dialog closes
+      setTimeout(()=>{document.title=originalTitle;},1000);
+    });
+
+    draw();
+  </script>
+</body>
+</html>
