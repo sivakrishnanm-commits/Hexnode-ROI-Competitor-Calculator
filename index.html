@@ -30,6 +30,11 @@
     .compare-savings{margin-top:6px;padding:8px 12px;border-radius:10px;background:rgba(64,156,53,.10);border:1px solid rgba(64,156,53,.22);color:var(--success);font-size:.85rem;display:flex;justify-content:space-between;align-items:center;gap:10px}
     .compare-savings strong{font-weight:500;font-variant-numeric:tabular-nums}.bonus{display:grid;grid-template-columns:1fr 1fr;gap:14px}.box,.verdict{padding:16px;border:1px solid var(--line);border-radius:18px;background:#fff}.box h3{margin-bottom:8px;color:var(--gray);font-size:.78rem;letter-spacing:.10em;text-transform:uppercase;font-weight:400}.verdict{grid-column:1/-1;background:linear-gradient(135deg,var(--soft-blue),#fff);border-color:rgba(0,60,245,.16)}.verdict strong{display:block;margin-bottom:6px;color:var(--blue);font-weight:400}    .placeholder{color:rgba(2,10,25,.28)}.footer{max-width:1180px;margin:0 auto 40px;padding:0 clamp(18px,4vw,46px);color:var(--gray);font-size:.84rem}
 
+    /* Min-width guards — prevent grid children from refusing to shrink and causing horizontal overflow.
+       Default min-width:auto on grid items keeps their content size, which can blow past the track. */
+    .layout>*,.results>*,.card,.inputs,.result,.grid,.field,.table-wrap,.mini,.bonus,.summary,.compare-bars,.compare-row,.compare-track{min-width:0}
+    input,select{min-width:0}
+
     /* ============ LOGIN GATE ============ */
     #loginGate{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:24px;background:radial-gradient(circle at 80% 0%,rgba(0,60,245,.55),transparent 35%),linear-gradient(135deg,#020A19 0%,#04122C 60%,#225193 140%)}
     #loginGate:before{content:"";position:absolute;inset:0;opacity:.18;background-image:linear-gradient(rgba(255,255,255,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.08) 1px,transparent 1px);background-size:64px 64px;pointer-events:none}
@@ -248,14 +253,14 @@
               <p class="muted" style="margin:-6px 0 12px;font-size:.82rem">Pick which competitor tier to compare against which Hexnode tier.</p>
               <div class="grid">
                 <div class="field"><label for="compareCompTier">Competitor tier</label><select id="compareCompTier" data-default="0">
-                  <option value="0">Low tier (basic)</option>
+                  <option value="0" selected>Low tier (basic)</option>
                   <option value="1">Mid tier</option>
                   <option value="2">High tier</option>
                 </select></div>
                 <div class="field"><label for="compareHexTier">Hexnode tier</label><select id="compareHexTier" data-default="2">
                   <option value="0">Low tier (Enterprise)</option>
                   <option value="1">Mid tier (Ultimate)</option>
-                  <option value="2">High tier (Ultra)</option>
+                  <option value="2" selected>High tier (Ultra)</option>
                 </select></div>
               </div>
               <button type="button" id="suggestBest" style="margin-top:10px;width:100%;min-height:38px;padding:0 14px;border:1px solid rgba(0,60,245,.25);border-radius:99px;background:linear-gradient(135deg,rgba(0,60,245,.08),rgba(0,60,245,.02));color:var(--blue);font:inherit;cursor:pointer;font-size:.88rem">✨ Suggest best comparison</button>
@@ -463,8 +468,13 @@
       // Headline KPI: savings from the SELECTED competitor tier → SELECTED Hexnode tier.
       // Sales agent picks the comparison via the two dropdowns. Default: Comp Low → Hex High (upgrade story).
       // If no savings (Hexnode picked tier costs more), hide the cards entirely.
-      const compTierIdx=Math.max(0,Math.min(2,parseInt($("compareCompTier").value,10)||0));
-      const hexTierIdx=Math.max(0,Math.min(2,parseInt($("compareHexTier").value,10)||2));
+      // FIX: use zero-safe tier parser. `parseInt("0") || fallback` flips 0 to the fallback because 0 is falsy.
+      const selectedTierIndex=(id,fallback)=>{
+        const parsed=parseInt($(id).value,10);
+        return Number.isInteger(parsed)?Math.max(0,Math.min(2,parsed)):fallback;
+      };
+      const compTierIdx=selectedTierIndex("compareCompTier",0);
+      const hexTierIdx=selectedTierIndex("compareHexTier",2);
       const basicCompTco=m.rows[compTierIdx].compTco;
       const topHexTco=m.rows[hexTierIdx].hexTco;
       const selectedCompName=m.rows[compTierIdx].compName;
