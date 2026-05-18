@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Hexnode Competitor ROI Calculator</title>
   <style>
     :root{
@@ -115,7 +115,7 @@
       @page{size:A4;margin:14mm 14mm 22mm 14mm}
       *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;color-adjust:exact !important}
       body{background:#fff;color:var(--navy);font-size:10pt;line-height:1.4}
-      .topbar,.nav,.btn,.reset,.pill,.footer,.no-print{display:none !important}
+      .topbar,.nav,.btn,.reset,.pill,.footer,.no-print,.hero-actions{display:none !important}
 
       /* Repeating disclaimer footer — fixed at the bottom of every printed page */
       .print-disclaimer{
@@ -230,7 +230,7 @@
           <p class="eyebrow">ROI Calculator</p>
           <h1>Calculate the cost advantage of Hexnode.</h1>
           <p>Compare licensing, admin resource cost, total cost of ownership, and savings across three plan tiers.</p>
-          <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+          <div class="hero-actions" style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
             <a class="btn" href="#inputs">Start calculating</a>
             <button class="btn" type="button" id="downloadPdf" style="background:rgba(255,255,255,.12);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.25)">⬇ Download PDF</button>
           </div>
@@ -267,6 +267,20 @@
               <p class="muted" id="suggestNote" style="display:none;margin:8px 0 0;font-size:.76rem;text-align:center"></p>
             </section>
 
+            <section class="group"><h3>Admin resource inputs</h3>
+              <div class="field" style="margin-bottom:12px"><label for="competitorProfile">Competitor product</label><select id="competitorProfile" data-default="intune">
+                <option value="intune">Microsoft Intune (Hexnode needs 50% fewer admins)</option>
+                <option value="jamf">Jamf (Hexnode needs 30% fewer admins)</option>
+                <option value="workspaceone">Workspace ONE (Hexnode needs 15% fewer admins)</option>
+                <option value="custom">Custom (set manually)</option>
+              </select></div>
+              <div class="grid">
+              <div class="field"><label for="compAdmins">Competitor admins</label><input id="compAdmins" type="number" min="0" step="1" value="6" data-default="6"></div>
+              <div class="field"><label for="compSalary">Competitor salary/admin</label><input id="compSalary" type="number" min="0" step="1" value="40000" data-default="40000"></div>
+              <div class="field"><label for="hexAdmins">Hexnode admins</label><input id="hexAdmins" type="number" min="0" step="1" value="3" data-default="3"></div>
+              <div class="field"><label for="hexSalary">Hexnode salary/admin</label><input id="hexSalary" type="number" min="0" step="1" value="17000" data-default="17000"></div>
+            </div></section>
+
             <section class="group"><h3>Deployment</h3><div class="grid">
               <div class="field"><label for="devices">Number of devices</label><input id="devices" type="number" min="0" step="1" value="6000" data-default="6000"></div>
               <div class="field"><label for="years">Number of years</label><input id="years" type="number" min="0" step="1" value="3" data-default="3"></div>
@@ -289,8 +303,6 @@
                 <option value="DKK">DKK - Danish Krone</option>
                 <option value="ZAR">ZAR - South African Rand (R)</option>
                 <option value="BRL">BRL - Brazilian Real (R$)</option>
-                <option value="MXN">MXN - Mexican Peso</option>
-                <option value="NZD">NZD - New Zealand Dollar (NZ$)</option>
               </select></div>
             </div></section>
 
@@ -304,25 +316,22 @@
             </div></section>
 
             <section class="group"><h3>Hexnode pricing / monthly device</h3><div class="grid one">
+              <div class="field"><label for="hexDiscount">Volume discount (%)</label><input id="hexDiscount" type="number" min="0" max="100" step="0.5" value="0" data-default="0"></div>
               <div class="field"><label for="hexLowName">Low tier plan</label><input id="hexLowName" value="Hexnode Enterprise" data-default="Hexnode Enterprise"></div>
-              <div class="field"><label for="hexLowPrice">Low price</label><input id="hexLowPrice" type="number" min="0" step="0.01" value="3.2" data-default="3.2"></div>
+              <div class="field"><label for="hexLowPrice">Low price (list)</label><input id="hexLowPrice" type="number" min="0" step="0.01" value="3.2" data-default="3.2"></div>
               <div class="field"><label for="hexMidName">Mid tier plan</label><input id="hexMidName" value="Hexnode Ultimate" data-default="Hexnode Ultimate"></div>
-              <div class="field"><label for="hexMidPrice">Mid price</label><input id="hexMidPrice" type="number" min="0" step="0.01" value="4.7" data-default="4.7"></div>
+              <div class="field"><label for="hexMidPrice">Mid price (list)</label><input id="hexMidPrice" type="number" min="0" step="0.01" value="4.7" data-default="4.7"></div>
               <div class="field"><label for="hexHighName">High tier plan</label><input id="hexHighName" value="Hexnode Ultra" data-default="Hexnode Ultra"></div>
-              <div class="field"><label for="hexHighPrice">High price</label><input id="hexHighPrice" type="number" min="0" step="0.01" value="6.48" data-default="6.48"></div>
+              <div class="field"><label for="hexHighPrice">High price (list)</label><input id="hexHighPrice" type="number" min="0" step="0.01" value="6.48" data-default="6.48"></div>
+              <p class="muted" id="discountSummary" style="margin:4px 0 0;font-size:.78rem;display:none"></p>
             </div></section>
 
-            <section class="group"><h3>Admin resource inputs</h3><div class="grid">
-              <div class="field"><label for="compAdmins">Competitor admins</label><input id="compAdmins" type="number" min="0" step="1" value="6" data-default="6"></div>
-              <div class="field"><label for="compSalary">Competitor salary/admin</label><input id="compSalary" type="number" min="0" step="1" value="40000" data-default="40000"></div>
-              <div class="field"><label for="hexAdmins">Hexnode admins</label><input id="hexAdmins" type="number" min="0" step="1" value="3" data-default="3"></div>
-              <div class="field"><label for="hexSalary">Hexnode salary/admin</label><input id="hexSalary" type="number" min="0" step="1" value="17000" data-default="17000"></div>
-            </div></section>
             <button class="btn reset" type="button" id="reset">Reset defaults</button>
           </form>
         </aside>
 
-        <section class="results">
+        <section class="results" aria-label="Calculation results">
+          <h2 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0">Calculation results</h2>
           <article class="card result" id="cost"><div class="head"><div><h2>Cost comparison</h2><p class="muted">License and admin resource expenses.</p></div><span class="pill" id="deploymentPill">6,000 devices / 3 years</span></div>
             <div class="table-wrap"><table><thead><tr><th>Product</th><th>Plan</th><th class="num">Monthly/device</th><th class="num">Annual license</th><th class="num">Total license</th></tr></thead><tbody id="licenseRows"></tbody></table></div>
             <div class="table-wrap" style="margin-top:16px"><table><thead><tr><th>Product</th><th class="num">Admins</th><th class="num">Annual/admin</th><th class="num">Total resource cost</th></tr></thead><tbody id="resourceRows"></tbody></table></div>
@@ -332,7 +341,7 @@
             <div class="table-wrap"><table><thead><tr><th>Tier</th><th>Plan</th><th class="num">License cost</th><th class="num">Resource cost</th><th class="num">Total TCO</th><th class="num">Savings</th><th class="num">Savings %</th></tr></thead><tbody id="roiRows"></tbody></table></div>
             <div class="mini"><div class="mini-card" id="totalSavingsCard"><span class="muted">Savings with Hexnode</span><strong id="totalSavings">$0</strong><span class="muted" id="totalSavingsNote" style="display:block;font-size:.78rem;margin-top:4px">Competitor basic vs Hexnode top.</span></div><div class="mini-card" id="freeMonthsCard"><span class="muted">Equivalent to</span><strong id="combinedRate">— months</strong><span class="muted" id="freeMonthsNote" style="display:block;font-size:.78rem;margin-top:4px">of Hexnode Ultra free.</span></div><div class="mini-card"><span class="muted" id="competitorTcoLabel">Competitor TCO</span><strong id="competitorTco">$0</strong></div></div>
 
-            <div class="compare-bars" id="compareBars" aria-label="TCO comparison">
+            <div class="compare-bars" id="compareBars" role="group" aria-label="TCO comparison">
               <div class="compare-row">
                 <div class="compare-label"><span id="compareLabelComp">Competitor basic</span><strong id="compareValComp">$0</strong></div>
                 <div class="compare-track"><span class="compare-fill comp" id="compareFillComp" style="width:0%"></span></div>
@@ -382,7 +391,7 @@
       form.addEventListener("submit",e=>{
         e.preventDefault();
         const u=userField.value.trim().toLowerCase();
-        const p=passField.value;
+        const p=passField.value.trim(); // I4 FIX: trim trailing whitespace from autocomplete
         if(u===CREDS.user&&p===CREDS.pass){
           unlock();
         }else{
@@ -392,9 +401,10 @@
         }
       });
 
-      // Clear error as user types again
+      // Clear error as user types again, or when they refocus a field
       [userField,passField].forEach(el=>{
         el.addEventListener("input",()=>error.classList.remove("show"));
+        el.addEventListener("focus",()=>error.classList.remove("show"));
       });
 
       function unlock(){
@@ -415,15 +425,26 @@
     const clean=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
     const n=(v,d=0)=>new Intl.NumberFormat("en-US",{minimumFractionDigits:d,maximumFractionDigits:d}).format(v||0);
     // Currency-locale pairing: each currency renders in its native locale (grouping, decimal style, symbol placement)
-    const localeFor={USD:"en-US",EUR:"de-DE",GBP:"en-GB",INR:"en-IN",AED:"ar-AE",SAR:"ar-SA",JPY:"ja-JP",CNY:"zh-CN",AUD:"en-AU",CAD:"en-CA",SGD:"en-SG",HKD:"en-HK",CHF:"de-CH",SEK:"sv-SE",NOK:"nb-NO",DKK:"da-DK",ZAR:"en-ZA",BRL:"pt-BR",MXN:"es-MX",NZD:"en-NZ"};
+    const localeFor={USD:"en-US",EUR:"de-DE",GBP:"en-GB",INR:"en-IN",AED:"ar-AE",SAR:"ar-SA",JPY:"ja-JP",CNY:"zh-CN",AUD:"en-AU",CAD:"en-CA",SGD:"en-SG",HKD:"en-HK",CHF:"de-CH",SEK:"sv-SE",NOK:"nb-NO",DKK:"da-DK",ZAR:"en-ZA",BRL:"pt-BR"};
     // Cache formatters per (currency, decimal-count) pair so we don't rebuild them on every cell render
     const fmtCache={};
     function fmt(d){
       const code=text("currency")||"USD";
       const key=`${code}_${d}`;
       if(!fmtCache[key]){
-        try{fmtCache[key]=new Intl.NumberFormat(localeFor[code]||"en-US",{style:"currency",currency:code,minimumFractionDigits:d,maximumFractionDigits:d});}
-        catch(e){fmtCache[key]=new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",minimumFractionDigits:d,maximumFractionDigits:d});}
+        // Try the preferred locale for this currency (e.g. es-MX for MXN to get pesos formatted natively).
+        // If the browser doesn't ship that locale's data, fall back to en-US BUT keep the chosen currency code,
+        // so we get e.g. "MX$1,800,000.00" instead of silently reverting to USD.
+        try{
+          fmtCache[key]=new Intl.NumberFormat(localeFor[code]||"en-US",{style:"currency",currency:code,minimumFractionDigits:d,maximumFractionDigits:d});
+        }catch(e){
+          try{
+            fmtCache[key]=new Intl.NumberFormat("en-US",{style:"currency",currency:code,minimumFractionDigits:d,maximumFractionDigits:d});
+          }catch(e2){
+            // Absolute last resort: USD if even the currency code itself is invalid
+            fmtCache[key]=new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",minimumFractionDigits:d,maximumFractionDigits:d});
+          }
+        }
       }
       return fmtCache[key];
     }
@@ -435,21 +456,27 @@
 
     function calculate(){
       const devices=num("devices"),years=num("years"),compAdmins=num("compAdmins"),compSalary=num("compSalary"),hexAdmins=num("hexAdmins"),hexSalary=num("hexSalary");
+      // Volume discount applies uniformly to all Hexnode tier prices (0-100%, clamped)
+      const discountRaw=num("hexDiscount");
+      const discount=Math.max(0,Math.min(100,discountRaw))/100;
       const compResource=compAdmins*compSalary*years,hexResource=hexAdmins*hexSalary*years;
       const rows=tiers.map(t=>{
         const [label,shortLabel,compNameId,compPriceId,hexNameId,hexPriceId]=t;
-        const compMonthly=num(compPriceId),hexMonthly=num(hexPriceId);
+        const compMonthly=num(compPriceId);
+        // Hexnode effective monthly price = list price × (1 - discount)
+        const hexMonthlyList=num(hexPriceId);
+        const hexMonthly=hexMonthlyList*(1-discount);
         const compAnnual=compMonthly*12*devices,hexAnnual=hexMonthly*12*devices;
         const compLicense=compAnnual*years,hexLicense=hexAnnual*years;
         const compTco=compLicense+compResource,hexTco=hexLicense+hexResource;
         const savings=compTco-hexTco,rate=compTco?savings/compTco:0;
-        return {label,shortLabel,compName:text(compNameId)||"Competitor plan",hexName:text(hexNameId)||"Hexnode plan",compMonthly,hexMonthly,compAnnual,hexAnnual,compLicense,hexLicense,compResource,hexResource,compTco,hexTco,savings,rate};
+        return {label,shortLabel,compName:text(compNameId)||"Competitor plan",hexName:text(hexNameId)||"Hexnode plan",compMonthly,hexMonthly,hexMonthlyList,compAnnual,hexAnnual,compLicense,hexLicense,compResource,hexResource,compTco,hexTco,savings,rate,discount};
       });
       const totalSavings=rows.reduce((a,r)=>a+r.savings,0);
       const totalCompTco=rows.reduce((a,r)=>a+r.compTco,0);
       const combinedRate=totalCompTco?totalSavings/totalCompTco:0;
       const best=[...rows].sort((a,b)=>b.savings-a.savings)[0];
-      return {devices,years,compAdmins,compSalary,hexAdmins,hexSalary,compResource,hexResource,rows,totalSavings,totalCompTco,combinedRate,best};
+      return {devices,years,compAdmins,compSalary,hexAdmins,hexSalary,compResource,hexResource,rows,totalSavings,totalCompTco,combinedRate,best,discount};
     }
 
     function draw(){
@@ -548,10 +575,84 @@
       const basic=m.rows[compTierIdx],top=m.rows[hexTierIdx],diff=Math.abs(basic.compTco-top.hexTco),cheaper=top.hexTco<=basic.compTco;
       $("bonusCompPlan").textContent=basic.compName;$("bonusCompTco").textContent=money(basic.compTco);$("bonusHexPlan").textContent=top.hexName;$("bonusHexTco").textContent=money(top.hexTco);$("bonusDifference").textContent=`Difference: ${money(diff)}`;
       $("bonusVerdict").textContent=cheaper?`${top.hexName} is cheaper than ${basic.compName}, saving ${money(diff)} while positioning the customer on ${selectedHexName}.`:`For ${money(diff)} more than ${basic.compName}, the customer can move to ${top.hexName} with the full Hexnode package.`;
+
+      // Discount summary — shows the effective per-tier prices when a discount is applied
+      const discountPctDisplay=m.discount*100;
+      const discountSummary=$("discountSummary");
+      if(discountPctDisplay>0){
+        const lines=m.rows.map(r=>`${r.hexName}: ${money(r.hexMonthlyList,2)} → ${money(r.hexMonthly,2)}`).join(" · ");
+        discountSummary.style.display="block";
+        discountSummary.style.color="var(--success)";
+        discountSummary.textContent=`✓ ${n(discountPctDisplay,1)}% off applied. ${lines}`;
+      }else{
+        discountSummary.style.display="none";
+      }
     }
     $("form").addEventListener("input",draw);
     $("form").addEventListener("change",draw);
-    $("reset").addEventListener("click",()=>{document.querySelectorAll("[data-default]").forEach(el=>el.value=el.dataset.default);$("suggestNote").style.display="none";draw();});
+    $("reset").addEventListener("click",()=>{
+      document.querySelectorAll("[data-default]").forEach(el=>el.value=el.dataset.default);
+      // B3 FIX: re-sync Hexnode admins to whatever the restored profile's ratio dictates,
+      // so future ratio changes don't desync the admin counts from the dropdown.
+      applyProfile(false);
+      $("suggestNote").style.display="none";
+      draw();
+    });
+
+    // ============ COMPETITOR PROFILE PRESETS ============
+    // Each preset defines what FRACTION of competitor admins Hexnode needs for the same deployment.
+    // Hexnode admin count auto-fills proportionally to whatever the rep types as competitor admins.
+    // 'custom' = manual mode (no auto-fill). The user can override Hexnode manually at any time.
+    const adminProfiles={
+      intune:{compDefault:6,hexRatio:0.50},        // Hexnode needs 50% of Intune's admin headcount
+      jamf:{compDefault:5,hexRatio:0.70},          // Hexnode needs 70% of Jamf's admin headcount
+      workspaceone:{compDefault:6,hexRatio:0.85}   // Hexnode needs 85% of Workspace ONE's admin headcount
+    };
+
+    // Flag to prevent the hexAdmins "input" listener from switching to "Custom" when WE set the value
+    // FIX B1+B2: declared ONCE here, before applyProfile() which references it
+    let suppressProfileReset=false;
+
+    // Apply the active profile. If resetCompCount=true, also reset competitor admins to the profile's default.
+    // I7 FIX: use num() helper to sanitize compAdmins (rejects negatives/NaN).
+    // I3 FIX: never round Hexnode admin count below 1 if competitor has at least 1 admin
+    function applyProfile(resetCompCount){
+      const profile=$("competitorProfile").value;
+      if(profile==="custom")return;
+      const preset=adminProfiles[profile];
+      if(!preset)return;
+      if(resetCompCount){$("compAdmins").value=preset.compDefault;}
+      const comp=num("compAdmins");
+      const rawHex=comp*preset.hexRatio;
+      const hex=comp>0?Math.max(1,Math.round(rawHex)):0;
+      suppressProfileReset=true;
+      $("hexAdmins").value=hex;
+      suppressProfileReset=false;
+    }
+
+    // I2 FIX: Switching profiles preserves user's compAdmins value — only the RATIO changes
+    $("competitorProfile").addEventListener("change",()=>{
+      applyProfile(false);
+      draw();
+    });
+
+    // When the user changes competitor admin count, recompute Hexnode proportionally (if not in custom mode)
+    $("compAdmins").addEventListener("input",()=>{
+      const profile=$("competitorProfile").value;
+      if(profile!=="custom"){
+        applyProfile(false);
+      }
+    });
+
+    // When the user manually edits Hexnode admins, switch to "Custom" mode
+    // so the dropdown doesn't override their value on the next competitor-count change
+    $("hexAdmins").addEventListener("input",()=>{
+      if(suppressProfileReset)return;
+      const profile=$("competitorProfile").value;
+      if(profile!=="custom"){
+        $("competitorProfile").value="custom";
+      }
+    });
 
     // ✨ Suggest best comparison — evaluates all 9 (comp tier × hex tier) combinations
     // and selects the one with the highest dollar savings. Falls back gracefully if no combination saves.
