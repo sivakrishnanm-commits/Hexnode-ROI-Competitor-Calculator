@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hexnode ROI Calculator</title>
+  <title>Hexnode Competitor ROI Calculator</title>
   <style>
     :root{
       --navy:#020A19;--blue:#003CF5;--pearl:#F8F5F0;--white:#fff;--gray:#4A4F57;
@@ -201,7 +201,7 @@
   <div id="loginGate" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
     <form class="login-card" id="loginForm" autocomplete="off">
       <p class="eyebrow-mini">Restricted access</p>
-      <h2 id="loginTitle">Hexnode ROI Calculator</h2>
+      <h2 id="loginTitle">Hexnode Competitor ROI Calculator</h2>
       <p class="login-sub">Enter your credentials to continue.</p>
       <div class="field">
         <label for="loginUser">Username</label>
@@ -356,7 +356,7 @@
   <!-- Disclaimer footer for PDF — fixed at the bottom of every printed page via @media print CSS.
        Hidden on screen via .print-disclaimer{display:none} default. -->
   <div class="print-disclaimer" aria-hidden="true">
-    <strong>Hexnode ROI Calculator</strong> · Generated <span id="printDate"></span> · This calculator provides indicative estimates for discussion purposes only. All figures are subject to change and do not constitute a binding offer. Final pricing and terms will be set out in the signed contract.
+    <strong>Hexnode Competitor ROI Calculator</strong> · Generated <span id="printDate"></span> · This calculator provides indicative estimates for discussion purposes only. All figures are subject to change and do not constitute a binding offer. Final pricing and terms will be set out in the signed contract.
   </div>
 
   <p class="footer">This calculator provides indicative estimates for discussion purposes only. All figures are subject to change and do not constitute a binding offer. Final pricing and terms will be set out in the signed contract.</p>
@@ -593,7 +593,7 @@
       const originalTitle=document.title;
       const code=$("currency").value||"USD";
       const devicesVal=$("devices").value||"0";
-      document.title=`Hexnode-ROI-${devicesVal}devices-${code}-${now.toISOString().slice(0,10)}`;
+      document.title=`Hexnode-Competitor-ROI-${devicesVal}devices-${code}-${now.toISOString().slice(0,10)}`;
       window.print();
       // Restore the page title after the print dialog closes
       setTimeout(()=>{document.title=originalTitle;},1000);
